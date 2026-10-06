@@ -4,22 +4,22 @@ using UnityEngine.InputSystem;
 public class Camera : MonoBehaviour
 {
     [Header("Citlivost a limity")]
-    [SerializeField] private float mouseSensitivity = 0.1f;
-    [SerializeField] private float minVerticalAngle = -80f; // Limit pohledu dolů
-    [SerializeField] private float maxVerticalAngle = 80f;  // Limit pohledu nahoru
+    [SerializeField] private float mouseSensitivity = 0.15f;
+    [SerializeField] private float minVerticalAngle = -85f; // Limit pohledu dolů
+    [SerializeField] private float maxVerticalAngle = 85f;  // Limit pohledu nahoru
 
     [Header("Odkazy")]
-    [SerializeField] private Transform playerBody; // Přetáhni sem objekt postavy (Player)
+    [SerializeField] private Transform playerBody; // Přetáhni sem objekt Player
 
     private float verticalRotation = 0f;
 
     private void Awake()
     {
-        // Zamčení a skrytí kurzoru
+        // Uzamčení kurzoru uprostřed obrazovky
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Pokud není přiřazen playerBody v Inspectoru, zkusíme najít rodiče
+        // Automatické nalezení rodiče (Player), pokud není ručně přiřazen
         if (playerBody == null && transform.parent != null)
         {
             playerBody = transform.parent;
@@ -28,17 +28,20 @@ public class Camera : MonoBehaviour
 
     private void LateUpdate()
     {
+        // Kontrola, zda je myš připojená
         if (Mouse.current == null) return;
 
-        // Načtení pohybu myši
+        // Získání pohybu myši od posledního snímku (BEZ Time.deltaTime!)
         Vector2 mouseDelta = Mouse.current.delta.ReadValue() * mouseSensitivity;
 
-        // 1. Vertikální rotace (rozhlížení nahoru a dolů)
+        // 1. Pohled NAHORU a DOLŮ (rotujeme pouze samotnou kamerou kolem osy X)
         verticalRotation -= mouseDelta.y;
         verticalRotation = Mathf.Clamp(verticalRotation, minVerticalAngle, maxVerticalAngle);
+
+        // Aplikujeme lokalní rotaci na kameru
         transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
 
-        // 2. Horizontální rotace (otáčení celé postavy do stran)
+        // 2. Pohled DO STRAN (otáčíme celým hráče kolem osy Y)
         if (playerBody != null)
         {
             playerBody.Rotate(Vector3.up * mouseDelta.x);

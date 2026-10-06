@@ -12,22 +12,12 @@ public class Move : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.2f;
     [SerializeField] private float gravity = -19.62f;
 
-    [Header("Animace")]
-    [SerializeField] private Animator animator;
-
     private CharacterController controller;
     private float verticalVelocity;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
-
-        // Automatické dohledání Animatoru, pokud není ručně vložený
-        if (animator == null)
-        {
-            animator = GetComponentInChildren<Animator>();
-        }
-
         // Zamčení a skrytí kurzoru myši
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -78,10 +68,7 @@ public class Move : MonoBehaviour
 
         // 4. Předání stavu do Animatoru
         bool isMoving = moveInput.magnitude > 0.1f;
-        if (animator != null)
-        {
-            animator.SetBool("isMoving", isMoving);
-        }
+        
 
         // 5. Aplikace pohybu
         Vector3 finalMove = moveInput * moveSpeed + Vector3.up * verticalVelocity;
