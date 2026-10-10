@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 // Dej na Canvas (nebo jakýkoli aktivní objekt, NE na samotný panel!)
 public class InventoryUI : MonoBehaviour
@@ -10,7 +11,6 @@ public class InventoryUI : MonoBehaviour
     public InventorySlotUI slotPrefab;   // prefab jednoho slotu
 
     [Header("Nastavení")]
-    public KeyCode toggleKey = KeyCode.I;
     public bool pauseGameWhenOpen = true;
     public bool unlockCursor = true;
 
@@ -22,10 +22,7 @@ public class InventoryUI : MonoBehaviour
         // vytvoř sloty
         slotUIs = new InventorySlotUI[inventory.slots.Count];
         for (int i = 0; i < slotUIs.Length; i++)
-        {
             slotUIs[i] = Instantiate(slotPrefab, slotsParent);
-            slotUIs[i].Init(this, i);
-        }
 
         inventory.OnChanged += Refresh;
         Refresh();
@@ -39,7 +36,7 @@ public class InventoryUI : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
+        if (Keyboard.current != null && Keyboard.current.iKey.wasPressedThisFrame)
             SetOpen(!isOpen);
     }
 
@@ -64,11 +61,5 @@ public class InventoryUI : MonoBehaviour
     {
         for (int i = 0; i < slotUIs.Length; i++)
             slotUIs[i].SetSlot(inventory.slots[i]);
-    }
-
-    // Kliknutí na slot – zatím odebere 1 kus (sem později přidej "použít" / "zahodit")
-    public void OnSlotClicked(int index)
-    {
-        inventory.RemoveFromSlot(index, 1);
     }
 }

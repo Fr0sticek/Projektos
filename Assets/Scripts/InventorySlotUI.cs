@@ -2,23 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Dej na prefab slotu (Button + child Image "Icon" + child TMP text "Amount")
+// Dej na prefab slotu (child Image "Icon" + child TMP text "Amount")
 public class InventorySlotUI : MonoBehaviour
 {
     public Image icon;
     public TMP_Text amountText;
-
-    private InventoryUI owner;
-    private int index;
-
-    public void Init(InventoryUI owner, int index)
-    {
-        this.owner = owner;
-        this.index = index;
-
-        var btn = GetComponent<Button>();
-        if (btn != null) btn.onClick.AddListener(() => owner.OnSlotClicked(index));
-    }
 
     public void SetSlot(InventorySlot slot)
     {
